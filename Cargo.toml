@@ -1,0 +1,17 @@
+[package]
+name = "miniprof"
+version = "0.1.0"
+authors = ["ykS"]
+edition = "2018"
+
+[lib]
+name = "miniprof"
+crate-type = ["cdylib", "rlib"]
+path = "src/lib.rs"
+
+[[bin]]
+name = "miniprof_test"
+path = "src/bin.rs"
+
+[dependencies]
+once_cell = "1.8.0"
