@@ -203,6 +203,6 @@ macro_rules! profile_scope {
             .unwrap()
             .curr_frame_mut()
             .enter(concat!("[", file!(), ":", line!(), "] (", $annotation, ")"));
-        let scope_marker = ScopeTimer::new();
+        let _scope_marker = ScopeTimer::new();
     };
 }
