@@ -138,7 +138,7 @@ pub static PROFILE_RECORD: Lazy<RwLock<ProfileData>> =
     Lazy::new(|| RwLock::new(ProfileData::new()));
 
 #[macro_export]
-macro_rules! enter {
+macro_rules! profiler_enter {
     ($annotation:literal) => {
         PROFILE_RECORD
             .write()
@@ -149,7 +149,7 @@ macro_rules! enter {
 }
 
 #[macro_export]
-macro_rules! leave {
+macro_rules! profiler_leave {
     () => {
         PROFILE_RECORD.write().unwrap().curr_frame_mut().leave()
     };
@@ -159,7 +159,7 @@ macro_rules! leave {
 }
 
 #[macro_export]
-macro_rules! post_message {
+macro_rules! profiler_message {
     ($annotation:expr) => {
         PROFILE_RECORD
             .write()
@@ -170,15 +170,39 @@ macro_rules! post_message {
 }
 
 #[macro_export]
-macro_rules! frame {
+macro_rules! profiler_frame {
     () => {
         PROFILE_RECORD.write().unwrap().frame()
     };
 }
 
 #[macro_export]
-macro_rules! profile_data {
+macro_rules! profiler_data {
     () => {
         PROFILE_RECORD.read().unwrap().stringify()
+    };
+}
+
+pub struct ScopeTimer {}
+impl ScopeTimer {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+impl Drop for ScopeTimer {
+    fn drop(&mut self) {
+        profiler_leave!();
+    }
+}
+
+#[macro_export]
+macro_rules! profile_scope {
+    ($annotation:literal) => {
+        PROFILE_RECORD
+            .write()
+            .unwrap()
+            .curr_frame_mut()
+            .enter(concat!("[", file!(), ":", line!(), "] (", $annotation, ")"));
+        let scope_marker = ScopeTimer::new();
     };
 }
