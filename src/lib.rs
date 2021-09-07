@@ -134,55 +134,6 @@ impl FrameData {
     }
 }
 
-pub static PROFILE_RECORD: Lazy<RwLock<ProfileData>> =
-    Lazy::new(|| RwLock::new(ProfileData::new()));
-
-#[macro_export]
-macro_rules! profiler_enter {
-    ($annotation:literal) => {
-        PROFILE_RECORD
-            .write()
-            .unwrap()
-            .curr_frame_mut()
-            .enter(concat!("[", file!(), ":", line!(), "] (", $annotation, ")"))
-    };
-}
-
-#[macro_export]
-macro_rules! profiler_leave {
-    () => {
-        PROFILE_RECORD.write().unwrap().curr_frame_mut().leave()
-    };
-    ($annotation:literal) => {
-        PROFILE_RECORD.write().unwrap().curr_frame_mut().leave()
-    };
-}
-
-#[macro_export]
-macro_rules! profiler_message {
-    ($annotation:expr) => {
-        PROFILE_RECORD
-            .write()
-            .unwrap()
-            .curr_frame_mut()
-            .post_message($annotation)
-    };
-}
-
-#[macro_export]
-macro_rules! profiler_frame {
-    () => {
-        PROFILE_RECORD.write().unwrap().frame()
-    };
-}
-
-#[macro_export]
-macro_rules! profiler_data {
-    () => {
-        PROFILE_RECORD.read().unwrap().stringify()
-    };
-}
-
 pub struct ScopeTimer {}
 impl ScopeTimer {
     pub fn new() -> Self {
@@ -195,6 +146,61 @@ impl Drop for ScopeTimer {
     }
 }
 
+pub static PROFILE_RECORD: Lazy<RwLock<ProfileData>> =
+    Lazy::new(|| RwLock::new(ProfileData::new()));
+
+#[cfg(feature = "runprof")]
+#[macro_export]
+macro_rules! profiler_enter {
+    ($annotation:literal) => {
+        PROFILE_RECORD
+            .write()
+            .unwrap()
+            .curr_frame_mut()
+            .enter(concat!("[", file!(), ":", line!(), "] (", $annotation, ")"))
+    };
+}
+
+#[cfg(feature = "runprof")]
+#[macro_export]
+macro_rules! profiler_leave {
+    () => {
+        PROFILE_RECORD.write().unwrap().curr_frame_mut().leave()
+    };
+    ($annotation:literal) => {
+        PROFILE_RECORD.write().unwrap().curr_frame_mut().leave()
+    };
+}
+
+#[cfg(feature = "runprof")]
+#[macro_export]
+macro_rules! profiler_message {
+    ($annotation:expr) => {
+        PROFILE_RECORD
+            .write()
+            .unwrap()
+            .curr_frame_mut()
+            .post_message($annotation)
+    };
+}
+
+#[cfg(feature = "runprof")]
+#[macro_export]
+macro_rules! profiler_frame {
+    () => {
+        PROFILE_RECORD.write().unwrap().frame()
+    };
+}
+
+#[cfg(feature = "runprof")]
+#[macro_export]
+macro_rules! profiler_data {
+    () => {
+        PROFILE_RECORD.read().unwrap().stringify()
+    };
+}
+
+#[cfg(feature = "runprof")]
 #[macro_export]
 macro_rules! profile_scope {
     ($annotation:literal) => {
@@ -205,4 +211,43 @@ macro_rules! profile_scope {
             .enter(concat!("[", file!(), ":", line!(), "] (", $annotation, ")"));
         let _scope_marker = ScopeTimer::new();
     };
+}
+
+#[cfg(not(feature = "runprof"))]
+#[macro_export]
+macro_rules! profiler_enter {
+    ($annotation:literal) => {};
+}
+
+#[cfg(not(feature = "runprof"))]
+#[macro_export]
+macro_rules! profiler_leave {
+    () => {};
+    ($annotation:literal) => {};
+}
+
+#[cfg(not(feature = "runprof"))]
+#[macro_export]
+macro_rules! profiler_message {
+    ($annotation:expr) => {};
+}
+
+#[cfg(not(feature = "runprof"))]
+#[macro_export]
+macro_rules! profiler_frame {
+    () => {};
+}
+
+#[cfg(not(feature = "runprof"))]
+#[macro_export]
+macro_rules! profiler_data {
+    () => {
+        ""
+    };
+}
+
+#[cfg(not(feature = "runprof"))]
+#[macro_export]
+macro_rules! profile_scope {
+    ($annotation:literal) => {};
 }

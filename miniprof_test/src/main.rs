@@ -2,8 +2,8 @@ use miniprof::*;
 use std::{thread, time};
 
 fn main() {
-    let alpha = time::Duration::from_micros(50);
-    let bravo = time::Duration::from_micros(200);
+    let alpha = time::Duration::from_micros(300);
+    let bravo = time::Duration::from_micros(500);
     profiler_frame!();
     profile_scope!("Frame");
     for _ in 0..100 {

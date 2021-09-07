@@ -9,9 +9,13 @@ name = "miniprof"
 crate-type = ["cdylib", "rlib"]
 path = "src/lib.rs"
 
-[[bin]]
-name = "miniprof_test"
-path = "src/bin.rs"
-
 [dependencies]
 once_cell = "1.8.0"
+
+[features]
+runprof = []
+
+[workspace]
+members = [
+    "miniprof_test"
+]

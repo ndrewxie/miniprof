@@ -1,3 +1,1 @@
-run = ["cargo", "run"]
-
-entrypoint = "src/main.rs"
+run = "cargo run -p miniprof_test --release"
