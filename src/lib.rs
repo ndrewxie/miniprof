@@ -114,7 +114,7 @@ impl FrameData {
             }
             mad /= self.segment_times.get(key).unwrap().iter().count() as u128;
 
-            entries.push((key, num_calls, average, mad, min.unwrap(), max.unwrap()));
+            entries.push((key, num_calls, num_calls as u128 * average, mad, min.unwrap(), max.unwrap()));
         }
 
         entries.sort_by(|a, b| b.2.cmp(&a.2));

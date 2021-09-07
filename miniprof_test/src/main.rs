@@ -4,9 +4,8 @@ use std::{thread, time};
 fn main() {
     let alpha = time::Duration::from_micros(300);
     let bravo = time::Duration::from_micros(500);
-    profiler_frame!();
-    profile_scope!("Frame");
     for _ in 0..100 {
+        profiler_frame!();
         profile_scope!("mainloop");
 
         profiler_enter!("alpha");
